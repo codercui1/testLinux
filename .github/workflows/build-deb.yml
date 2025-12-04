@@ -1,40 +1,47 @@
 name: Build .deb Package
+
 on: [push]
+
 jobs:
   build:
     runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
 
-      - name: Setup .NET
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup .NET 8
         uses: actions/setup-dotnet@v4
         with:
           dotnet-version: '8.0.x'
 
-      - name: Publish Linux-x64
+      - name: Publish for Linux-x64
         run: |
           cd testLinux
           dotnet publish -c Release -r linux-x64 --self-contained true
 
       - name: Create .deb package
         run: |
+          # 创建标准目录结构
           mkdir -p app/usr/bin
           cp testLinux/bin/Release/net8.0/linux-x64/publish/testLinux app/usr/bin/
           chmod +x app/usr/bin/testLinux
 
+          # 创建 DEBIAN 控制文件
           mkdir -p app/DEBIAN
-          cat > app/DEBIAN/control <<EOF
-Package: testlinux
-Version: 1.0.0
-Architecture: amd64
-Maintainer: codercui1 <1481412589@qq.com>
-Description: My Avalonia App
-EOF
+          echo "Package: testlinux" > app/DEBIAN/control
+          echo "Version: 1.0.0" >> app/DEBIAN/control
+          echo "Architecture: amd64" >> app/DEBIAN/control
+          echo "Maintainer: codercui1 <1481412589@qq.com>" >> app/DEBIAN/control
+          echo "Description: My Avalonia App" >> app/DEBIAN/control
+          echo "Depends: libc6 (>= 2.27), libgtk-3-0" >> app/DEBIAN/control
 
+          # 构建 .deb 包
           dpkg-deb --build app
           mv app.deb testlinux_1.0.0_amd64.deb
 
-      - uses: actions/upload-artifact@v4
+      - name: Upload .deb artifact
+        uses: actions/upload-artifact@v4
         with:
           name: deb-package
           path: testlinux_1.0.0_amd64.deb
