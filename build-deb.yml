@@ -1,0 +1,30 @@
+name: Build .deb Package
+on: [push]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+      - run: dotnet publish -c Release -r linux-x64 --self-contained true
+      - run: |
+          mkdir -p app/usr/bin
+          cp bin/Release/net8.0/linux-x64/publish/testLinux app/usr/bin/
+          chmod +x app/usr/bin/testLinux
+          mkdir -p app/DEBIAN
+          cat > app/DEBIAN/control <<EOF
+Package: testlinux
+Version: 1.0.0
+Architecture: amd64
+Maintainer: Your Name <you@example.com>
+Description: My Avalonia App
+EOF
+          dpkg-deb --build app
+          mv app.deb testlinux_1.0.0_amd64.deb
+      - uses: actions/upload-artifact@v4
+        with:
+          name: deb-package
+          path: testlinux_1.0.0_amd64.deb

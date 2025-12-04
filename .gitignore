@@ -1,0 +1,23 @@
+# Visual Studio
+.vs/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+*.vssscc
+*.vssscc
+*.vssscc
+*.vssscc
+*.vssscc
+
+# Build outputs
+bin/
+obj/
+publish/
+
+# Temporary files
+*.tmp
+*.temp
+~$
+*.swp
+*.swo
