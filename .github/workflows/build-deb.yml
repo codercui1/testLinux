@@ -26,7 +26,7 @@ jobs:
           # 创建标准目录结构
           mkdir -p app/usr/bin
           cp testLinux/bin/Release/net8.0/publish/linux-x64/testLinux app/usr/bin/testlinux
-          chmod +x app/usr/bin/testLinux
+          chmod +x app/usr/bin/testlinux
 
           # 创建 DEBIAN 控制文件
           mkdir -p app/DEBIAN
