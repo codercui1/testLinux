@@ -18,7 +18,8 @@ jobs:
       - name: Publish for Linux-x64
         run: |
           cd testLinux
-          dotnet publish -c Release -r linux-x64 --self-contained true
+          dotnet publish -c Release -r linux-x64 --self-contained true --output ./bin/Release/net8.0/publish/linux-x64
+          ls -la ./bin/Release/net8.0/publish/linux-x64/
 
       - name: Create .deb package
         run: |
